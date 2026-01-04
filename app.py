@@ -1,6 +1,17 @@
 import pandas as pd
 import streamlit as st
 import copy
+# ===============================
+# CONFIGURACIÓN EDITABLE
+# ===============================
+
+NOMBRE_EMPRESA = "Empresa Ejemplo S.A.S"
+MONEDA = "COP"
+
+RECARGO_NOCTURNO = 0.35
+RECARGO_DOMINICAL = 0.75
+RECARGO_EXTRA_DIURNA = 0.25
+RECARGO_EXTRA_NOCTURNA = 0.75
 
 # Initialize session state
 if "basico" not in st.session_state:
@@ -24,7 +35,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "Jornal",
-                "CC-NOMINA": "1MF9",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,  # This doesn't change with hours
@@ -33,7 +44,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "14:00 a 18:00",
                 "DESCRIPCION": "4 - Horas extras Diurnas",
-                "CC-NOMINA": "M300",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 125,
                 "VALOR($)": vl_hora * (125 / 100) * 4,
                 "HOURS_FIELD": "4",  # This can be modified
@@ -44,7 +55,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "Dominical",
-                "CC-NOMINA": "1M02",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -53,7 +64,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "8 - Horas diurnas dominicales",
-                "CC-NOMINA": "1M06",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -62,7 +73,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "8 - Compensatorio lab.doming",
-                "CC-NOMINA": "1M08",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_hora * (100 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -71,7 +82,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "14:00 a 18:00",
                 "DESCRIPCION": "4 - Hora Extra Diurna dominical (125+80)  205%",
-                "CC-NOMINA": "M310",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 205,
                 "VALOR($)": vl_hora * (205 / 100) * 4,
                 "HOURS_FIELD": "4",
@@ -82,7 +93,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 02:00",
                 "DESCRIPCION": "Jornal",
-                "CC-NOMINA": "1MF9",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -91,7 +102,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "21:00 a 02:00",
                 "DESCRIPCION": "5 - Recargo Nocturno",
-                "CC-NOMINA": "M220",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 5,
                 "HOURS_FIELD": "5",
@@ -100,7 +111,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "02:00 a 06:00",
                 "DESCRIPCION": "4 - Hora Extra Nocturna",
-                "CC-NOMINA": "M305",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 175,
                 "VALOR($)": vl_hora * (175 / 100) * 4,
                 "HOURS_FIELD": "4",
@@ -111,7 +122,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 02:00",
                 "DESCRIPCION": "Dominical",
-                "CC-NOMINA": "1M02",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -120,7 +131,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 21:00",
                 "DESCRIPCION": "3 - Horas diurnas dominicales",
-                "CC-NOMINA": "1M06",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 3,
                 "HOURS_FIELD": "3",
@@ -129,7 +140,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "21:00 a 24:00",
                 "DESCRIPCION": "3 - Horas nocturnas dominicales",
-                "CC-NOMINA": "1M07",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 115,
                 "VALOR($)": vl_hora * (115 / 100) * 3,
                 "HOURS_FIELD": "3",
@@ -138,7 +149,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 00:00",
                 "DESCRIPCION": "6 - Compensatorio lab.domingo",
-                "CC-NOMINA": "1M08",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_hora * (100 / 100) * 6,
                 "HOURS_FIELD": "6",
@@ -156,7 +167,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "02:00 a 06:00",
                 "DESCRIPCION": "4 - Hora Extra Nocturna",
-                "CC-NOMINA": "M305",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 175,
                 "VALOR($)": vl_hora * (175 / 100) * 4,
                 "HOURS_FIELD": "4",
@@ -167,7 +178,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "FESTIVO",
-                "CC-NOMINA": "1M03",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -176,7 +187,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "8 Hora Diurna Festiva (80%)",
-                "CC-NOMINA": "1MAM",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -185,7 +196,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "06:00 a 14:00",
                 "DESCRIPCION": "8 Compensat lab. Festivo (100%)",
-                "CC-NOMINA": "1MAO",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_hora * (100 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -196,7 +207,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 06:00",
                 "DESCRIPCION": "Jornal",
-                "CC-NOMINA": "1MF9",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -205,7 +216,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 06:00",
                 "DESCRIPCION": "8-Horas de Recargo Nocturno",
-                "CC-NOMINA": "M220",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -216,7 +227,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "14:00 a 22:00",
                 "DESCRIPCION": "DOMINICAL",
-                "CC-NOMINA": "1M02",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -225,7 +236,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "14:00 a 21:00",
                 "DESCRIPCION": "7- Horas Diurna Festiva (75%)",
-                "CC-NOMINA": "1M06",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 7,
                 "HOURS_FIELD": "7",
@@ -234,7 +245,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "21:00 a 22:00",
                 "DESCRIPCION": "1 - Hora Noct Dominic (115%)",
-                "CC-NOMINA": "1M07",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 115,
                 "VALOR($)": vl_hora * (115 / 100) * 1,
                 "HOURS_FIELD": "1",
@@ -243,7 +254,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "14:00 a 22:00",
                 "DESCRIPCION": "8 - Compensat lab. Festivo (100%)",
-                "CC-NOMINA": "1M08",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_hora * (100 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -254,7 +265,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "14:00 a 22:00",
                 "DESCRIPCION": "JORNAL",
-                "CC-NOMINA": "1MF9",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -263,7 +274,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "21:00 a 22:00",
                 "DESCRIPCION": "1 Hora de Recargo Nocturno 35%",
-                "CC-NOMINA": "M220",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 1,
                 "HOURS_FIELD": "1",
@@ -274,7 +285,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 02:00",
                 "DESCRIPCION": "Jornal",
-                "CC-NOMINA": "1MF9",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -283,7 +294,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "21:00 a 00:00",
                 "DESCRIPCION": "3 Recargo Nocturno",
-                "CC-NOMINA": "1M220",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 3,
                 "HOURS_FIELD": "3",
@@ -292,7 +303,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "00:00 a 02:00",
                 "DESCRIPCION": "2 Recargo Noct Festivo",
-                "CC-NOMINA": "1M11",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 2,
                 "HOURS_FIELD": "2",
@@ -301,7 +312,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "00:00 a 02:00",
                 "DESCRIPCION": "2 Domingo o Festivo Noct",
-                "CC-NOMINA": "1M12",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 2,
                 "HOURS_FIELD": "2",
@@ -310,7 +321,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "02:00 a 06:00",
                 "DESCRIPCION": "4 Horas Extra Noct Festiva  (80+175HEXT NO) 255%",
-                "CC-NOMINA": "M315",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 255,
                 "VALOR($)": vl_hora * (255 / 100) * 4,
                 "HOURS_FIELD": "4",
@@ -321,7 +332,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 02:00",
                 "DESCRIPCION": "Dominical",
-                "CC-NOMINA": "1M02",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -330,7 +341,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 21:00",
                 "DESCRIPCION": "3 - Horas diurnas dominicales",
-                "CC-NOMINA": "1M06",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 3,
                 "HOURS_FIELD": "3",
@@ -339,7 +350,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "21:00 a 02:00",
                 "DESCRIPCION": "5 - Horas nocturnas dominicales 115%",
-                "CC-NOMINA": "1M07",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 115,
                 "VALOR($)": vl_hora * (115 / 100) * 5,
                 "HOURS_FIELD": "5",
@@ -348,7 +359,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "18:00 a 02:00",
                 "DESCRIPCION": "8 - Compensatorio lab.domingo",
-                "CC-NOMINA": "1M08",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_hora * (100 / 100) * 8,
                 "HOURS_FIELD": "8",
@@ -368,7 +379,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 06:00",
                 "DESCRIPCION": "Dominical",
-                "CC-NOMINA": "1M02",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -377,7 +388,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 12:00",
                 "DESCRIPCION": "2 - Horas Noct Dominical",
-                "CC-NOMINA": "1M07",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 115,
                 "VALOR($)": vl_hora * (115 / 100) * 2,
                 "HOURS_FIELD": "2",
@@ -386,7 +397,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 12:00",
                 "DESCRIPCION": "2 - Compensatorio Lab Dominical",
-                "CC-NOMINA": "1M08",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_hora * (100 / 100) * 2,
                 "HOURS_FIELD": "2",
@@ -395,7 +406,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "12:00 a 06:00",
                 "DESCRIPCION": "6 - Jornada Nocturna Dominical",
-                "CC-NOMINA": "1MA1",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 135,
                 "VALOR($)": vl_hora * (135 / 100) * 6,
                 "HOURS_FIELD": "6",
@@ -406,7 +417,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 06:00",
                 "DESCRIPCION": "Jornal",
-                "CC-NOMINA": "1MF9",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 100,
                 "VALOR($)": vl_dia * (100 / 100),
                 "HOURS_FIELD": None,
@@ -415,7 +426,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 12:00",
                 "DESCRIPCION": "2 - Hora de Recargo Nocturno",
-                "CC-NOMINA": "M220",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 2,
                 "HOURS_FIELD": "2",
@@ -424,7 +435,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 06:00",
                 "DESCRIPCION": "6 - Recargo Noct Festivo",
-                "CC-NOMINA": "1M11",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 35,
                 "VALOR($)": vl_hora * (35 / 100) * 6,
                 "HOURS_FIELD": "6",
@@ -433,7 +444,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "22:00 a 06:00",
                 "DESCRIPCION": "6 - Domingo o festivo Noct",
-                "CC-NOMINA": "1M12",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 80,
                 "VALOR($)": vl_hora * (80 / 100) * 6,
                 "HOURS_FIELD": "6",
@@ -444,7 +455,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "1 hora",
                 "DESCRIPCION": "1-hora extra Nocturna Festiva  ley 2101",
-                "CC-NOMINA": "1MCI",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 255,
                 "VALOR($)": vl_hora * (255 / 100) * 1,
                 "HOURS_FIELD": "1",
@@ -462,7 +473,7 @@ def get_jornada_data(tipo_jornada, vl_dia=0, vl_hora=0):
             {
                 "HORA": "1 hora",
                 "DESCRIPCION": "1-hora extra Nocturna  ley 2101",
-                "CC-NOMINA": "1MCH",
+                "CC-NOMINA": "concepto utilizado en su nómina",
                 "PORCENTAJE": 175,
                 "VALOR($)": vl_hora * (175 / 100) * 1,
                 "HOURS_FIELD": "1",
@@ -530,7 +541,7 @@ def is_multi_day_jornada(jornada_name):
 
 # Streamlit app setup
 st.set_page_config(
-    page_title="Calculadora Provicosecha",
+    page_title="Calculadora de Horas Extras y Jornales",
     layout="centered",
     page_icon="imgs/calc.ico",
 )
